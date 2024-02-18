@@ -4,6 +4,7 @@ import requests
 import os
 import sys
 import json
+from typing import List, Dict, Union
 
 # Extra utility imports
 import zipfile
@@ -175,12 +176,14 @@ all_models = {
     ],
 }
 
-def get_all_models():
+def get_all_models() -> Dict[str, List[Union[str, int, Dict[str, int]]]]:
     """Return the figshare links for models."""
     return all_models
 
 
-def get_figshare_model(model_name="jv_formation_energy_peratom_alignn"):
+def get_figshare_model(
+    model_name: str = "jv_formation_energy_peratom_alignn"
+) -> ALIGNN:
     """Get ALIGNN torch models from figshare."""
     # https://figshare.com/projects/ALIGNN_models/126478
 
@@ -241,11 +244,11 @@ def get_figshare_model(model_name="jv_formation_energy_peratom_alignn"):
 
 
 def get_prediction(
-    model_name="jv_formation_energy_peratom_alignn",
-    atoms=None,
-    cutoff=8,
-    max_neighbors=12,
-):
+    model_name: str = "jv_formation_energy_peratom_alignn",
+    atoms: Atoms = None,
+    cutoffL: float = 8,
+    max_neighbors: int = 12,
+) -> List[float]:
     """Get model prediction on a single structure."""
     model = get_figshare_model(model_name)
     # print("Loading completed.")
@@ -383,10 +386,6 @@ if __name__ == "__main__":
         atoms = Atoms.from_poscar(file_path)
     elif file_format == "cif":
         atoms = Atoms.from_cif(file_path)
-    elif file_format == "xyz":
-        atoms = Atoms.from_xyz(file_path, box_size=500)
-    elif file_format == "pdb":
-        atoms = Atoms.from_pdb(file_path, max_lat=500)
     else:
         raise NotImplementedError("File format not implemented", file_format)
 
@@ -398,9 +397,3 @@ if __name__ == "__main__":
     )
 
     print("Predicted value:", model_name, file_path, out_data)
-    # import glob
-    # atoms_array = []
-    # for i in glob.glob("alignn/examples/sample_data/*.vasp"):
-    #    atoms = Atoms.from_poscar(i)
-    #    atoms_array.append(atoms)
-    # get_multiple_predictions(atoms_array=atoms_array)
