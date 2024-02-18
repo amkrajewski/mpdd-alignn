@@ -1,3 +1,61 @@
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel"]
+requires = ["setuptools>=61.0", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysipfenn"
+version = "1.0.0"
+authors = [
+  { name="Adam Krajewski", email="ak@psu.edu" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+description = "A version of the NIST-JARVIS ALIGNN optimized in terms of model performance and to some extent reliability, for large-scale deployments over the MPDD infrastructure by Phases Research Lab."
+readme = "README.md"
+
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.19.5",
+    "scipy>=1.6.1",
+    "jarvis-tools>=2021.07.19",
+    "torch<=2.0.0",
+    "dgl>=0.6.0",
+    "spglib<=2.0.2",
+    "scikit-learn>=0.22.2",
+    "matplotlib>=3.4.1",
+    "tqdm>=4.60.0",
+    "pandas>=1.2.3",
+    "pytorch-ignite>=0.5.0.dev20221024",
+    "pydantic==1.8.1",
+    
+    "pydocstyle>=6.0.0",
+    "pyparsing>=2.2.1,<3",
+    "ase",
+    "accelerate>=0.20.3"
+]
+
+[project.optional-dependencies]
+full = [
+    "flake8>=3.9.1",
+    "pycodestyle>=2.7.0",
+]
+
+[project.urls]
+"Research Page" = "https://phaseslab.com/mpdd"
+"Homepage" = "https://phaseslab.org"
+"OPTIMADE Access" = "https://optimade.mpdd.org"
+"Simple GUI" = "http://mpdd.org"
+"Bug Tracker" = "https://github.com/PhasesResearchLab/MPDD/issues"
+"ALIGNN" = "https://github.com/usnistgov/alignn"
