@@ -1,0 +1,29 @@
+defaultModels:
+
+- name: jv_formation_energy_peratom_alignn
+  model: jv_formation_energy_peratom_alignn
+  url: https://figshare.com/ndownloader/files/31458679
+
+- name: jv_mbj_bandgap_alignn
+  model: jv_mbj_bandgap_alignn
+  url: https://figshare.com/ndownloader/files/31458694
+
+- name: jv_shear_modulus_gv_alignn
+  model: jv_shear_modulus_gv_alignn
+  url: https://figshare.com/ndownloader/files/31458724
+
+- name: jv_bulk_modulus_kv_alignn
+  model: jv_bulk_modulus_kv_alignn
+  url: https://figshare.com/ndownloader/files/31458649
+
+- name: jv_exfoliation_energy_alignn
+  model: jv_exfoliation_energy_alignn
+  url: https://figshare.com/ndownloader/files/31458676
+
+- name: mp_e_form_alignn
+  model: mp_e_form_alignn
+  url: https://figshare.com/ndownloader/files/31458811
+
+- name: mp_gappbe_alignn
+  model: mp_gappbe_alignn
+  url: https://figshare.com/ndownloader/files/31458814
