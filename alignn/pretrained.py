@@ -246,7 +246,7 @@ def get_figshare_model(
 def get_prediction(
     model_name: str = "jv_formation_energy_peratom_alignn",
     atoms: Atoms = None,
-    cutoffL: float = 8,
+    cutoff: float = 8,
     max_neighbors: int = 12,
 ) -> List[float]:
     """Get model prediction on a single structure."""
@@ -376,24 +376,27 @@ def get_multiple_predictions(
 
 
 if __name__ == "__main__":
-    args = parser.parse_args(sys.argv[1:])
-    model_name = args.model_name
-    file_path = args.file_path
-    file_format = args.file_format
-    cutoff = args.cutoff
-    max_neighbors = args.max_neighbors
-    if file_format == "poscar":
-        atoms = Atoms.from_poscar(file_path)
-    elif file_format == "cif":
-        atoms = Atoms.from_cif(file_path)
-    else:
-        raise NotImplementedError("File format not implemented", file_format)
+    if False:
+        args = parser.parse_args(sys.argv[1:])
+        model_name = args.model_name
+        file_path = args.file_path
+        file_format = args.file_format
+        cutoff = args.cutoff
+        max_neighbors = args.max_neighbors
+        if file_format == "poscar":
+            atoms = Atoms.from_poscar(file_path)
+        elif file_format == "cif":
+            atoms = Atoms.from_cif(file_path)
+        else:
+            raise NotImplementedError("File format not implemented", file_format)
+
+    model_name='jv_formation_energy_peratom_alignn'
 
     out_data = get_prediction(
         model_name=model_name,
-        cutoff=float(cutoff),
-        max_neighbors=int(max_neighbors),
-        atoms=atoms,
+        cutoff=8,
+        max_neighbors=12,
+        atoms=Atoms.from_poscar('alignn/examples/sample_data/POSCAR-JVASP-10.vasp'),
     )
 
-    print("Predicted value:", model_name, file_path, out_data)
+    print("Predicted value:", model_name, out_data)
