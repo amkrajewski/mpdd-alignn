@@ -38,7 +38,8 @@ dependencies = [
     "tqdm>=4.60.0",
     "pandas>=1.2.3",
     "pydantic==1.8.1",
-    "ruamel.yaml"
+    "ruamel.yaml",
+    "pysmartdl2"
 ]
 
 [project.optional-dependencies]

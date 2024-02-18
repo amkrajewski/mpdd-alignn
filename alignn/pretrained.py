@@ -9,10 +9,12 @@ from typing import List, Dict, Union
 # Extra utility imports
 import zipfile
 from tqdm import tqdm
+from tqdm.contrib.concurrent import process_map
 from ruamel.yaml import YAML
 import tempfile
 import pandas as pd
 tqdm.pandas()
+from pysmartdl2 import SmartDL
 
 # ML imports
 import torch
@@ -35,6 +37,25 @@ with open("config.yaml", "r") as f:
 def get_default_models() -> Dict[str, List[Dict[str, str]]]:
     """Return the default models for MPDD from ALIGNN."""
     return default_models
+
+def download_model(model):
+    if not os.path.exists(model['model']):
+        print(f"Downloading {model['name']} from {model['url']} to {model['model']}")
+        obj = SmartDL(model["url"], './'+ model["model"], threads=4, progress_bar=False)
+        obj.start()
+        print(f"--> {model['model']} download complete!")
+    else:
+        print(f"Model {model['name']} already exists at {model['model']}")
+
+def download_default_models() -> None:
+    """Download the default models for MPDD from ALIGNN."""
+    t0 = time.time()
+    process_map(
+        download_model,
+        default_models,
+        max_workers=7,
+    )
+    print(f"All models downloaded in {time.time() - t0:.2f} seconds")
 
 
 """
