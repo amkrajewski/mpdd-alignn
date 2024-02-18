@@ -28,7 +28,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "numpy>=1.26.0",
-    "scipy>=1.6.1",
+    "scipy>=1.11.0",
     "jarvis-tools>=2021.07.19",
     "torch<=2.0.0",
     "dgl>=0.6.0",
