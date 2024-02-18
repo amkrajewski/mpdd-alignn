@@ -13,8 +13,6 @@ import torch
 import sys
 import json
 
-# from jarvis.db.jsonutils import loadjson
-import argparse
 from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import Graph
 from jarvis.db.jsonutils import dumpjson
@@ -171,44 +169,6 @@ all_models = {
         {"alignn_layers": 6, "gcn_layers": 6},
     ],
 }
-
-
-parser = argparse.ArgumentParser(
-    description="Atomistic Line Graph Neural Network Pretrained Models"
-)
-parser.add_argument(
-    "--model_name",
-    default="jv_formation_energy_peratom_alignn",
-    help="Choose a model from these "
-    + str(len(list(all_models.keys())))
-    + " models:"
-    + ", ".join(list(all_models.keys())),
-)
-
-parser.add_argument(
-    "--file_format", default="poscar", help="poscar/cif/xyz/pdb file format."
-)
-
-parser.add_argument(
-    "--file_path",
-    default="alignn/examples/sample_data/POSCAR-JVASP-10.vasp",
-    help="Path to file.",
-)
-
-parser.add_argument(
-    "--cutoff",
-    default=8,
-    help="Distance cut-off for graph constuction"
-    + ", usually 8 for solids and 5 for molecules.",
-)
-
-parser.add_argument(
-    "--max_neighbors",
-    default=12,
-    help="Maximum number of nearest neighbors in the periodic atomistic graph"
-    + " construction.",
-)
-
 
 device = "cpu"
 if torch.cuda.is_available():
