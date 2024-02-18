@@ -1,24 +1,29 @@
-#!/usr/bin/env python
-
 """Module to download and load pre-trained ALIGNN models."""
+# Standard imports
 import requests
 import os
-import zipfile
-from tqdm import tqdm
-from alignn.models.alignn import ALIGNN, ALIGNNConfig
-from alignn.data import get_torch_dataset
-from torch.utils.data import DataLoader
-import tempfile
-import torch
 import sys
 import json
 
+# Extra utility imports
+import zipfile
+from tqdm import tqdm
+import tempfile
+import pandas as pd
+tqdm.pandas()
+
+# ML imports
+import torch
+device = "cpu"
+from torch.utils.data import DataLoader
+
+# ALIGNN imports
+from alignn.models.alignn import ALIGNN, ALIGNNConfig
+from alignn.data import get_torch_dataset
 from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import Graph
 from jarvis.db.jsonutils import dumpjson
-import pandas as pd
 
-tqdm.pandas()
 
 """
 Name of the model, figshare link, number of outputs,
@@ -169,13 +174,6 @@ all_models = {
         {"alignn_layers": 6, "gcn_layers": 6},
     ],
 }
-
-device = "cpu"
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-
-# device = "cpu"
-
 
 def get_all_models():
     """Return the figshare links for models."""
