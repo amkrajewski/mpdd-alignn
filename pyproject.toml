@@ -37,7 +37,8 @@ dependencies = [
     "matplotlib>=3.4.1",
     "tqdm>=4.60.0",
     "pandas>=1.2.3",
-    "pydantic==1.8.1"
+    "pydantic==1.8.1",
+    "ruamel.yaml"
 ]
 
 [project.optional-dependencies]

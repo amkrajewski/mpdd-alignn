@@ -9,6 +9,7 @@ from typing import List, Dict, Union
 # Extra utility imports
 import zipfile
 from tqdm import tqdm
+from ruamel.yaml import YAML
 import tempfile
 import pandas as pd
 tqdm.pandas()
@@ -24,6 +25,16 @@ from alignn.data import get_torch_dataset
 from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import Graph
 from jarvis.db.jsonutils import dumpjson
+
+"""Default models for MPDD from ALIGNN. Stored in `config.yaml` in the root directory of the package."""
+yaml = YAML(typ="safe")
+with open("config.yaml", "r") as f:
+    config = yaml.load(f)
+    default_models = config["defaultModels"]
+
+def get_default_models() -> Dict[str, List[Dict[str, str]]]:
+    """Return the default models for MPDD from ALIGNN."""
+    return default_models
 
 
 """
@@ -376,6 +387,7 @@ def get_multiple_predictions(
 
 
 if __name__ == "__main__":
+    print(get_default_models())
     if False:
         args = parser.parse_args(sys.argv[1:])
         model_name = args.model_name
