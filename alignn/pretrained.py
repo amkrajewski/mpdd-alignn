@@ -4,6 +4,7 @@ import requests
 import os
 import sys
 import json
+import time
 from typing import List, Dict, Union
 
 # Extra utility imports
@@ -218,7 +219,6 @@ def get_figshare_model(
 ) -> ALIGNN:
     """Get ALIGNN torch models from figshare."""
     # https://figshare.com/projects/ALIGNN_models/126478
-
     tmp = all_models[model_name]
     url = tmp[0]
     # output_features = tmp[1]
@@ -250,7 +250,6 @@ def get_figshare_model(
             chks.append(i)
         if "config.json" in i:
             cfg = i
-
     print("Using chk file", tmp, "from ", chks)
     print("Path", os.path.abspath(path))
     print("Config", os.path.abspath(cfg))
@@ -409,6 +408,14 @@ def get_multiple_predictions(
 
 if __name__ == "__main__":
     print(get_default_models())
+    t0 = time.time()
+    download_default_models()
+    print(f"All models downloaded with new method in {time.time() - t0:.2f} seconds")
+
+    t1 = time.time()
+    for model in default_models:
+        get_figshare_model(model['model'].replace('.zip', ''))
+    print(f"All models loaded with older method in {time.time() - t1:.2f} seconds")
     if False:
         args = parser.parse_args(sys.argv[1:])
         model_name = args.model_name
