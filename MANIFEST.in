@@ -1,0 +1,3 @@
+recursive-exclude alignn/examples *
+recursive-exclude alignn/tex *
+include alignn/examples/sample_data/POSCAR-JVASP-10.vasp
