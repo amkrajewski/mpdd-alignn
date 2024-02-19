@@ -6,6 +6,8 @@ This tool is a modified version of the **NIST-JARVIS** [**`ALIGNN`**](https://gi
 
 Key modifications that were made here:
 - A set of models of interest has been selected and defined in [**`config.yaml`**](alignn/config.yaml) for consistency, readability, and easy tracking. These are the models which will be populating MPDD.
+- **Dependency optimizations for running models**, skipping by default installation of several packages needed only for training and auxiliary tasks. Full
+set can still be installed by `pip install "mpdd-alignn[full]"`.
 - The process of model fetching was far too slow using `pretrained.get_figshare_model()`; thus, we reimplemented it similar to [`pySIPFENN`](https://pysipfenn.org) by multi-threading connection to Figshare via `pysmartdl2` we maintain, and parallelize the process on per-model basis. **Model download is now 7 times faster**, fetching all 7 default models in 6.1 vs 41.4 seconds.
 - Optimized what is included in the built package. Now, its **package size is reduced 33.5 times**, from 21.7MB to 0.65MB.
 - Streamlined operation, where we can get results for a directory of POSCARS for all default models in just 3 quick lines
