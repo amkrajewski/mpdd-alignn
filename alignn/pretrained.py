@@ -16,6 +16,7 @@ import tempfile
 import pandas as pd
 tqdm.pandas()
 from pysmartdl2 import SmartDL
+from dgl.data.utils import save_graphs, load_graphs
 
 # ML imports
 import torch
@@ -31,7 +32,7 @@ from jarvis.db.jsonutils import dumpjson
 
 """Default models for MPDD from ALIGNN. Stored in `config.yaml` in the root directory of the package."""
 yaml = YAML(typ="safe")
-with open("config.yaml", "r") as f:
+with open("alignn/config.yaml", "r") as f:
     config = yaml.load(f)
     default_models = config["defaultModels"]
 
@@ -39,16 +40,22 @@ def get_default_models() -> Dict[str, List[Dict[str, str]]]:
     """Return the default models for MPDD from ALIGNN."""
     return default_models
 
-def download_model(model):
+def download_model(model, verbose: bool = True) -> None:
     if not os.path.exists(model['model']):
-        print(f"Downloading {model['name']} from {model['url']} to {model['model']}")
+        if verbose:
+            print(f"Downloading {model['name']} from {model['url']} to {model['model']}", flush=True)
         obj = SmartDL(model["url"], './'+ model["model"], threads=4, progress_bar=False)
         obj.start()
-        print(f"--> {model['model']} download complete!")
+        if obj.isSuccessful():
+            if verbose:
+                print(f"--> {model['model']} download complete!", flush=True)
+        else:
+            print(f"xxx {model['model']} download failed!", flush=True)
     else:
-        print(f"Model {model['name']} already exists at {model['model']}")
+        if verbose:
+            print(f"Model {model['name']} already exists at {model['model']}", flush=True)
 
-def download_default_models() -> None:
+def download_default_models(verbose: bool = True) -> None:
     """Download the default models for MPDD from ALIGNN."""
     t0 = time.time()
     process_map(
@@ -56,9 +63,82 @@ def download_default_models() -> None:
         default_models,
         max_workers=7,
     )
-    print(f"All models downloaded in {time.time() - t0:.2f} seconds")
+    if verbose:
+        print(f"All models downloaded in {time.time() - t0:.2f} seconds", flush=True)
 
+def unzip_default_models() -> None:
+    # Check if all are downloaded
+    for model in default_models:
+        if not os.path.exists(model['model']):
+            raise FileNotFoundError(f"Model {model['name']} not found at {model['model']}!")
+    # Unzip all models
+    for model in default_models:
+        with zipfile.ZipFile(model['model'], 'r') as zip_ref:
+            zip_ref.extractall(model['model'].replace('.zip', ''))
 
+def runModels_fromDirectory(
+        directory: str, 
+        mode: str = "serial",
+        saveGraphs: bool = False):
+    """Run all default models on all structures in a directory that are either in POSCAR or CIF format."""
+    # Parse all structures into Atoms objects
+    atoms_array = []
+    outputs: List[Dict[str, Union[float, str]]] = []
+    for file in os.listdir(directory):
+        if file.endswith(("poscar", "POSCAR", "vasp", "VASP")):
+            outputs.append({"name": file})
+            atoms_array.append(Atoms.from_poscar(os.path.join(directory, file)))
+        elif file.endswith(("cif", "CIF")):
+            outputs.append({"name": file})
+            atoms_array.append(Atoms.from_cif(os.path.join(directory, file)))
+        else:
+            print(f"Skipping file {file} as it is not a POSCAR or CIF file!", flush=True)
+    # Convert all Atoms to Graphs
+    if mode == "serial":
+        graph_array = []
+        for atoms in tqdm(atoms_array):
+            graph_array.append(Graph.atom_dgl_multigraph(atoms))
+    elif mode == "parallel":
+        graph_array = process_map(
+            Graph.atom_dgl_multigraph,
+            atoms_array,
+            chunksize=10,
+            max_workers=4
+        )
+    else:
+        raise ValueError(f"Mode {mode} not implemented!")
+    
+    if saveGraphs:
+        print("Saving graphs to disk...", flush=True)
+        input_files = [i["name"] for i in outputs]
+        for g, name in zip(graph_array, input_files):
+            save_graphs(f"graphs/{name}.graph.bin", list(g), formats='coo')
+        print("Graphs saved!", flush=True)
+
+    modelArray = []
+    for model in default_models:
+        zp = zipfile.ZipFile(model['model'], 'r')
+        # Get the full path of checkpoint_300.pt in the zip
+        modelCheckpoint = [i for i in zp.namelist() if "checkpoint_" in i and "pt" in i][0]
+        config = json.loads(zp.read([i for i in zp.namelist() if "config.json" in i][0]))
+        data = zipfile.ZipFile(model['model']).read(modelCheckpoint)
+        model = ALIGNN(ALIGNNConfig(**config["model"]))
+
+        _, filename = tempfile.mkstemp()
+        with open(filename, "wb") as f:
+            f.write(data)
+        model.load_state_dict(torch.load(filename, map_location='cpu')["model"])
+        model.to('cpu')
+        model.eval()
+        modelArray.append(model)
+    
+    for model, loaded_model in zip(default_models, modelArray):
+        for g, out in zip(graph_array, outputs):
+            out_data = loaded_model([g[0], g[1]]).item()
+            out[model['name']] = out_data
+    return outputs
+
+# ******* Old method to download models *******
 """
 Name of the model, figshare link, number of outputs,
 extra config params (optional)
@@ -218,14 +298,8 @@ def get_figshare_model(
     model_name: str = "jv_formation_energy_peratom_alignn"
 ) -> ALIGNN:
     """Get ALIGNN torch models from figshare."""
-    # https://figshare.com/projects/ALIGNN_models/126478
     tmp = all_models[model_name]
     url = tmp[0]
-    # output_features = tmp[1]
-    # if len(tmp) > 2:
-    #    config_params = tmp[2]
-    # else:
-    #    config_params = {}
     zfile = model_name + ".zip"
     path = str(os.path.join(os.path.dirname(__file__), zfile))
     if not os.path.isfile(path):
@@ -254,13 +328,7 @@ def get_figshare_model(
     print("Path", os.path.abspath(path))
     print("Config", os.path.abspath(cfg))
     config = json.loads(zipfile.ZipFile(path).read(cfg))
-    # print("Loading the zipfile...", zipfile.ZipFile(path).namelist())
     data = zipfile.ZipFile(path).read(tmp)
-    # model = ALIGNN(
-    #    ALIGNNConfig(
-    #        name="alignn", output_features=output_features, **config_params
-    #    )
-    # )
     model = ALIGNN(ALIGNNConfig(**config["model"]))
 
     new_file, filename = tempfile.mkstemp()
@@ -282,7 +350,6 @@ def get_prediction(
 ) -> List[float]:
     """Get model prediction on a single structure."""
     model = get_figshare_model(model_name)
-    # print("Loading completed.")
     g, lg = Graph.atom_dgl_multigraph(
         atoms,
         cutoff=float(cutoff),
@@ -407,15 +474,10 @@ def get_multiple_predictions(
 
 
 if __name__ == "__main__":
-    print(get_default_models())
-    t0 = time.time()
-    download_default_models()
-    print(f"All models downloaded with new method in {time.time() - t0:.2f} seconds")
+    #print(get_default_models())
+    #download_default_models()
+    #runModels_fromDirectory('example.SigmaPhase')
 
-    t1 = time.time()
-    for model in default_models:
-        get_figshare_model(model['model'].replace('.zip', ''))
-    print(f"All models loaded with older method in {time.time() - t1:.2f} seconds")
     if False:
         args = parser.parse_args(sys.argv[1:])
         model_name = args.model_name
