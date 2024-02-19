@@ -57,14 +57,18 @@ def download_model(model, verbose: bool = True) -> None:
         if verbose:
             print(f"Model {model['model']} already exists at {model['model']}", flush=True)
 
-def download_default_models(verbose: bool = True) -> None:
+def download_default_models(verbose: bool = True, parallel: bool = True) -> None:
     """Download the default models for MPDD from ALIGNN."""
     t0 = time.time()
-    process_map(
-        download_model,
-        default_models,
-        max_workers=7,
-    )
+    if parallel:
+        process_map(
+            download_model,
+            default_models,
+            max_workers=7,
+        )
+    else:
+        for model in default_models:
+            download_model(model, verbose=verbose)
     if verbose:
         print(f"All models downloaded in {time.time() - t0:.2f} seconds", flush=True)
 
