@@ -6,6 +6,7 @@ import sys
 import json
 import time
 from typing import List, Dict, Union
+from importlib import resources
 
 # Extra utility imports
 import zipfile
@@ -41,10 +42,11 @@ def get_default_models() -> Dict[str, List[Dict[str, str]]]:
     return default_models
 
 def download_model(model, verbose: bool = True) -> None:
-    if not os.path.exists(model['model']):
+    modelPath = str(resources.files('alignn').joinpath(model['model']))
+    if not os.path.exists(modelPath):
         if verbose:
             print(f"Downloading {model['name']} from {model['url']} to {model['model']}", flush=True)
-        obj = SmartDL(model["url"], './'+ model["model"], threads=4, progress_bar=False)
+        obj = SmartDL(model["url"], modelPath, threads=4, progress_bar=False)
         obj.start()
         if obj.isSuccessful():
             if verbose:
@@ -53,7 +55,7 @@ def download_model(model, verbose: bool = True) -> None:
             print(f"xxx {model['model']} download failed!", flush=True)
     else:
         if verbose:
-            print(f"Model {model['name']} already exists at {model['model']}", flush=True)
+            print(f"Model {model['model']} already exists at {model['model']}", flush=True)
 
 def download_default_models(verbose: bool = True) -> None:
     """Download the default models for MPDD from ALIGNN."""
@@ -76,7 +78,7 @@ def unzip_default_models() -> None:
         with zipfile.ZipFile(model['model'], 'r') as zip_ref:
             zip_ref.extractall(model['model'].replace('.zip', ''))
 
-def runModels_fromDirectory(
+def run_models_from_directory(
         directory: str, 
         mode: str = "serial",
         saveGraphs: bool = False):
@@ -117,11 +119,12 @@ def runModels_fromDirectory(
 
     modelArray = []
     for model in default_models:
-        zp = zipfile.ZipFile(model['model'], 'r')
+        modelPath = str(resources.files('alignn').joinpath(model['model']))
+        zp = zipfile.ZipFile(modelPath, 'r')
         # Get the full path of checkpoint_300.pt in the zip
         modelCheckpoint = [i for i in zp.namelist() if "checkpoint_" in i and "pt" in i][0]
         config = json.loads(zp.read([i for i in zp.namelist() if "config.json" in i][0]))
-        data = zipfile.ZipFile(model['model']).read(modelCheckpoint)
+        data = zipfile.ZipFile(modelPath).read(modelCheckpoint)
         model = ALIGNN(ALIGNNConfig(**config["model"]))
 
         _, filename = tempfile.mkstemp()
