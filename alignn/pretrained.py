@@ -33,7 +33,7 @@ from jarvis.db.jsonutils import dumpjson
 
 """Default models for MPDD from ALIGNN. Stored in `config.yaml` in the root directory of the package."""
 yaml = YAML(typ="safe")
-with open("alignn/config.yaml", "r") as f:
+with resources.files('alignn').joinpath("config.yaml").open("r") as f:
     config = yaml.load(f)
     default_models = config["defaultModels"]
 
