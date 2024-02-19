@@ -1,29 +1,29 @@
 defaultModels:
 
-- name: jv_formation_energy_peratom_alignn
+- name: ALIGNN-JARVIS Formation Energy [eV/atom]
   model: jv_formation_energy_peratom_alignn.zip
   url: https://figshare.com/ndownloader/files/31458679
 
-- name: jv_mbj_bandgap_alignn
+- name: ALIGNN-JARVIS MBJ Bandgap [eV]
   model: jv_mbj_bandgap_alignn.zip
   url: https://figshare.com/ndownloader/files/31458694
 
-- name: jv_shear_modulus_gv_alignn
+- name: ALIGNN-JARVIS Shear Modulus [GPa]
   model: jv_shear_modulus_gv_alignn.zip
   url: https://figshare.com/ndownloader/files/31458724
 
-- name: jv_bulk_modulus_kv_alignn
+- name: ALIGNN-JARVIS Bulk Modulus [GPa]
   model: jv_bulk_modulus_kv_alignn.zip
   url: https://figshare.com/ndownloader/files/31458649
 
-- name: jv_exfoliation_energy_alignn
+- name: ALIGNN-JARVIS Exfoliation Energy [meV/atom]
   model: jv_exfoliation_energy_alignn.zip
   url: https://figshare.com/ndownloader/files/31458676
 
-- name: mp_e_form_alignn
+- name: ALIGNN-MP Formation Energy [eV/atom]
   model: mp_e_form_alignn.zip
   url: https://figshare.com/ndownloader/files/31458811
 
-- name: mp_gappbe_alignn
+- name: ALIGNN-MP PBE Bandgap [eV]
   model: mp_gappbe_alignn.zip
   url: https://figshare.com/ndownloader/files/31458814
