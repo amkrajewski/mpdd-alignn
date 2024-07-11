@@ -2,7 +2,7 @@
 # import dgl
 import torch
 from dgl.nn import AvgPooling, GraphConv
-from pydantic.typing import Literal
+from typing import Literal
 from torch import nn
 from torch.nn import functional as F
 

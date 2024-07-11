@@ -1,10 +1,8 @@
 """Pydantic model for default configuration and validation."""
 
 import subprocess
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 import os
-from pydantic import root_validator
-from pydantic.typing import Literal
 from alignn.utils import BaseSettings
 from alignn.models.modified_cgcnn import CGCNNConfig
 from alignn.models.icgcnn import ICGCNNConfig
@@ -226,18 +224,3 @@ class TrainingConfig(BaseSettings):
         DenseALIGNNConfig,
         ACGCNNConfig,
     ] = ALIGNNConfig(name="alignn")
-    # ] = CGCNNConfig(name="cgcnn")
-
-    @root_validator()
-    def set_input_size(cls, values):
-        """Automatically configure node feature dimensionality."""
-        values["model"].atom_input_features = FEATURESET_SIZE[
-            values["atom_features"]
-        ]
-
-        return values
-
-    # @property
-    # def atom_input_features(self):
-    #     """Automatically configure node feature dimensionality."""
-    #     return FEATURESET_SIZE[self.atom_features]
