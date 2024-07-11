@@ -54,9 +54,9 @@ full = [
 ]
 
 [project.urls]
+"Homepage" = "https://github.com/PhasesResearchLab/mpdd-alignn"
+"Bug Tracker" = "https://github.com/PhasesResearchLab/mpdd-alignn/issues"
 "Research Page" = "https://phaseslab.com/mpdd"
-"Homepage" = "https://phaseslab.org"
-"OPTIMADE Access" = "https://optimade.mpdd.org"
-"Simple GUI" = "http://mpdd.org"
-"Bug Tracker" = "https://github.com/PhasesResearchLab/MPDD/issues"
+"MPDD OPTIMADE Access" = "https://optimade.mpdd.org"
+"MPDD Simple GUI" = "http://mpdd.org"
 "ALIGNN" = "https://github.com/usnistgov/alignn"
