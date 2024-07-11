@@ -37,6 +37,7 @@ dependencies = [
     "matplotlib>=3.4.1",
     "tqdm>=4.60.0",
     "pandas>=1.2.3",
+    "pydantic_settings",
     "ruamel.yaml",
     "pysmartdl2"
 ]
