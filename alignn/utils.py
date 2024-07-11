@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Union
 import matplotlib.pyplot as plt
 
-from pydantic import BaseSettings as PydanticBaseSettings
+from pydantic_settings import BaseSettings as PydanticBaseSettings
 
 
 class BaseSettings(PydanticBaseSettings):
