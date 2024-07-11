@@ -28,7 +28,6 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "spglib==2.0.2",
-    "pydantic>=2.0, <3.0",
     "numpy>=1.26.0, <2.0.0",
     "scipy>=1.11.0",
     "jarvis-tools>=2021.07.19",
