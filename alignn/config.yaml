@@ -2,28 +2,42 @@ defaultModels:
 
 - name: ALIGNN-JARVIS Formation Energy [eV/atom]
   model: jv_formation_energy_peratom_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458679
+  url: 
+    - https://figshare.com/ndownloader/files/31458679
+    - https://zenodo.org/records/15772850/files/jv_formation_energy_peratom_alignn.zip
 
 - name: ALIGNN-JARVIS MBJ Bandgap [eV]
   model: jv_mbj_bandgap_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458694
+  url: 
+    - https://figshare.com/ndownloader/files/31458694
+    - https://zenodo.org/records/15772850/files/jv_mbj_bandgap_alignn.zip
 
 - name: ALIGNN-JARVIS Shear Modulus [GPa]
   model: jv_shear_modulus_gv_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458724
+  url: 
+    - https://figshare.com/ndownloader/files/31458724
+    - https://zenodo.org/records/15772850/files/jv_shear_modulus_gv_alignn.zip
 
 - name: ALIGNN-JARVIS Bulk Modulus [GPa]
   model: jv_bulk_modulus_kv_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458649
+  url: 
+    - https://figshare.com/ndownloader/files/31458649
+    - https://zenodo.org/records/15772850/files/jv_bulk_modulus_kv_alignn.zip
 
 - name: ALIGNN-JARVIS Exfoliation Energy [meV/atom]
   model: jv_exfoliation_energy_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458676
+  url: 
+    - https://figshare.com/ndownloader/files/31458676
+    - https://zenodo.org/records/15772850/files/jv_exfoliation_energy_alignn.zip
 
 - name: ALIGNN-MP Formation Energy [eV/atom]
   model: mp_e_form_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458811
+  url: 
+    - https://figshare.com/ndownloader/files/31458811
+    - https://zenodo.org/records/15772850/files/mp_e_form_alignnn.zip
 
 - name: ALIGNN-MP PBE Bandgap [eV]
   model: mp_gappbe_alignn.zip
-  url: https://figshare.com/ndownloader/files/31458814
+  url: 
+    - https://figshare.com/ndownloader/files/31458814
+    - https://zenodo.org/records/15772850/files/mp_gappbe_alignnn.zip
