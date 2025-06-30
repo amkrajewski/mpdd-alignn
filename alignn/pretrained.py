@@ -171,6 +171,8 @@ def run_models_from_directory(
         
         print(f"Model {model['name']} loaded!", flush=True)
     
+    print(f"Running {len(default_models)} models on {len(graph_array)} structures...", flush=True)
+    # Run all models on all graphs
     for model, loaded_model in zip(default_models, modelArray):
         for g, out in zip(graph_array, outputs):
             model_output = loaded_model([g[0], g[1]])
@@ -187,7 +189,10 @@ def run_models_from_directory(
                 # For regular models that return tensor directly
                 out_data = model_output.item()
                 
-            out[model['name']] = out_data
+            out[model['name']] = round(out_data, 6)
+    
+    print("All models runs complete!", flush=True)
+
     return outputs
 
 # ******* Old method to download models *******
