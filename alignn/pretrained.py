@@ -125,19 +125,33 @@ def run_models_from_directory(
     for model in default_models:
         modelPath = str(resources.files('alignn').joinpath(model['model']))
         zp = zipfile.ZipFile(modelPath, 'r')
-        # Get the full path of checkpoint_300.pt in the zip
-        modelCheckpoint = [i for i in zp.namelist() if "checkpoint_" in i and "pt" in i][0]
+        # Get the full path of checkpoint_300.pt or best_model.pt in the zip. Pick the first one found.
+        # This is a workaround for the fact that some models (new ones) have a different naming convention
+        # for the ALIGNN checkpoint files.
+        modelCheckpoint = [
+            i for i in zp.namelist() 
+            if ("checkpoint_" in i and "pt" in i) or "best_model.pt" in i
+            ]
+        if len(modelCheckpoint) == 0:
+            raise ValueError(f"No model identifier found in {modelPath} for model {model['name']}!", flush=True)
+        if len(modelCheckpoint) > 1:
+            print(f"Multiple model identifiers ({len(modelCheckpoint)}) found in {modelPath} for model {model['name']}: {modelCheckpoint}. Using the first one in the list.", flush=True)
+            modelCheckpoint = modelCheckpoint[0]
+        else:
+            modelCheckpoint = modelCheckpoint[0]
         config = json.loads(zp.read([i for i in zp.namelist() if "config.json" in i][0]))
         data = zipfile.ZipFile(modelPath).read(modelCheckpoint)
-        model = ALIGNN(ALIGNNConfig(**config["model"]))
+        loadedModel = ALIGNN(ALIGNNConfig(**config["model"]))
 
         _, filename = tempfile.mkstemp()
         with open(filename, "wb") as f:
             f.write(data)
-        model.load_state_dict(torch.load(filename, map_location='cpu')["model"])
-        model.to('cpu')
-        model.eval()
-        modelArray.append(model)
+        loadedModel.load_state_dict(torch.load(filename, map_location='cpu')["model"])
+        loadedModel.to('cpu')
+        loadedModel.eval()
+        modelArray.append(loadedModel)
+        
+        print(f"Model {model['name']} loaded!", flush=True)
     
     for model, loaded_model in zip(default_models, modelArray):
         for g, out in zip(graph_array, outputs):
@@ -331,6 +345,9 @@ def get_figshare_model(
             chks.append(i)
         if "config.json" in i:
             cfg = i
+        if "best_model.pt" in i:
+            tmp = i
+            chks.append(i)
     print("Using chk file", tmp, "from ", chks)
     print("Path", os.path.abspath(path))
     print("Config", os.path.abspath(cfg))
