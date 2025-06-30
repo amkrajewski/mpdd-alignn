@@ -20,31 +20,39 @@ set can still be installed by `pip install "mpdd-alignn[full]"`.
     Which give us neat:
 
     ```
-    [{
-        'ALIGNN-JARVIS Bulk Modulus [GPa]': 98.06883239746094,
-        'ALIGNN-JARVIS Exfoliation Energy [meV/atom]': 101.71208190917969,
-        'ALIGNN-JARVIS Formation Energy [eV/atom]': -1.1146986484527588,
-        'ALIGNN-JARVIS MBJ Bandgap [eV]': 0.5845542550086975,
-        'ALIGNN-JARVIS Shear Modulus [GPa]': 39.18968963623047,
-        'ALIGNN-MP Formation Energy [eV/atom]': -1.4002774953842163,
-        'ALIGNN-MP PBE Bandgap [eV]': 1.074204921722412,
-        'name': '9-Pb8O12.POSCAR'
-    },
-    {
-        'ALIGNN-JARVIS Bulk Modulus [GPa]': 194.2947540283203,
-        'ALIGNN-JARVIS Exfoliation Energy [meV/atom]': 362.1310729980469,
-        'ALIGNN-JARVIS Formation Energy [eV/atom]': 0.010236039757728577,
-        'ALIGNN-JARVIS MBJ Bandgap [eV]': 0.0064897798001766205,
-        'ALIGNN-JARVIS Shear Modulus [GPa]': 85.74588775634766,
-        'ALIGNN-MP Formation Energy [eV/atom]': -0.018119990825653076,
-        'ALIGNN-MP PBE Bandgap [eV]': -0.00551827996969223,
-        'name': '19-Fe4Ni26.POSCAR'
-    },
-    {
-        'ALIGNN-JARVIS Bulk Modulus [GPa]': 185.35687255859375,
-        'ALIGNN-JARVIS Exfoliation Energy [meV/atom]': 379.46417236328125,
-        'ALIGNN-JARVIS Formation Energy [eV/atom]': 0.10529126971960068,
-    ...
+    [
+        {
+            'name': '22-Fe10Ni20.POSCAR',
+            'ALIGNN-Alexandria Bandgap [eV]': 0.001391,
+            'ALIGNN-Alexandria Formation Energy [eV/atom]': 0.095294,
+            'ALIGNN-Alexandria Volume Per Atom [A^3]': 11.140231,
+            'ALIGNN-JARVIS Bulk Modulus [GPa]': 183.945847,
+            'ALIGNN-JARVIS Exfoliation Energy [meV/atom]': 350.855591,
+            'ALIGNN-JARVIS Formation Energy [eV/atom]': 0.027578,
+            'ALIGNN-JARVIS MBJ Bandgap [eV]': 0.017667,
+            'ALIGNN-JARVIS Shear Modulus [GPa]': 74.540077,
+            'ALIGNN-MP Formation Energy [eV/atom]': -0.045874,
+            'ALIGNN-MP PBE Bandgap [eV]': 0.01164,
+        },
+        {
+            'name': '2-Fe8Ni22.POSCAR',
+            'ALIGNN-Alexandria Bandgap [eV]': 0.001679,
+            'ALIGNN-Alexandria Formation Energy [eV/atom]': 0.25086,
+            'ALIGNN-Alexandria Volume Per Atom [A^3]': 10.656669,
+            'ALIGNN-JARVIS Bulk Modulus [GPa]': 187.983017,
+            'ALIGNN-JARVIS Exfoliation Energy [meV/atom]': 352.69455,
+            'ALIGNN-JARVIS Formation Energy [eV/atom]': 0.025119,
+            'ALIGNN-JARVIS MBJ Bandgap [eV]': 0.010531,
+            'ALIGNN-JARVIS Shear Modulus [GPa]': 80.09848,
+            'ALIGNN-MP Formation Energy [eV/atom]': -0.042081,
+            'ALIGNN-MP PBE Bandgap [eV]': 0.019553,
+        },
+        {
+            'name': '11-Fe10Ni20.POSCAR',
+            'ALIGNN-Alexandria Bandgap [eV]': 0.001165,
+            'ALIGNN-Alexandria Formation Energy [eV/atom]': 0.217117,
+            'ALIGNN-Alexandria Volume Per Atom [A^3]': 10.583747,
+        ...
     ```
 
 ## ALIGNN Compatibility and Install
