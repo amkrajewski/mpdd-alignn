@@ -26,6 +26,7 @@ from torch.utils.data import DataLoader
 
 # ALIGNN imports
 from alignn.models.alignn import ALIGNN, ALIGNNConfig
+from alignn.models.alignn_atomwise import ALIGNNAtomWise, ALIGNNAtomWiseConfig
 from alignn.data import get_torch_dataset
 from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import Graph
@@ -55,7 +56,7 @@ def download_model(model, verbose: bool = True) -> None:
             print(f"xxx {model['model']} download failed!", flush=True)
     else:
         if verbose:
-            print(f"Model {model['model']} already exists at {model['model']}", flush=True)
+            print(f"Model {model['model']} already exists at {model['model']}\n", flush=True)
 
 def download_default_models(verbose: bool = True, parallel: bool = True) -> None:
     """Download the default models for MPDD from ALIGNN."""
@@ -100,6 +101,7 @@ def run_models_from_directory(
         else:
             print(f"Skipping file {file} as it is not a POSCAR or CIF file!", flush=True)
     # Convert all Atoms to Graphs
+    print(f"Converting {len(atoms_array)} structures to graphs...", flush=True)
     if mode == "serial":
         graph_array = []
         for atoms in tqdm(atoms_array):
@@ -171,7 +173,20 @@ def run_models_from_directory(
     
     for model, loaded_model in zip(default_models, modelArray):
         for g, out in zip(graph_array, outputs):
-            out_data = loaded_model([g[0], g[1]]).item()
+            model_output = loaded_model([g[0], g[1]])
+            
+            # Handle different output formats
+            if isinstance(model_output, dict):
+                # For atomwise models that return dict with 'out' key
+                if 'out' in model_output:
+                    out_data = model_output['out'].item()
+                else:
+                    # Take the first value if dict has other keys
+                    out_data = list(model_output.values())[0].item()
+            else:
+                # For regular models that return tensor directly
+                out_data = model_output.item()
+                
             out[model['name']] = out_data
     return outputs
 
