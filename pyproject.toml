@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mpdd-alignn"
-version = "1.0.6"
+version = "1.1.0"
 authors = [
   { name="Adam M. Krajewski", email="adam@phaseslab.org" }
 ]
@@ -22,7 +22,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-description = "A version of the NIST-JARVIS ALIGNN optimized in terms of model performance and to some extent reliability, for large-scale deployments over the MPDD infrastructure by Phases Research Lab."
+description = "Our version of the NIST-JARVIS ALIGNN optimized in terms of model performance and to some extent reliability, for large-scale deployments over the MPDD infrastructure by Phases Research Lab."
 readme = "README.md"
 
 requires-python = ">=3.9"
