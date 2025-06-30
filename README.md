@@ -57,6 +57,18 @@ or (as recommended) clone this repository and
 
     pip install -e .
 
+## `DGL` Issues
+
+On some platforms, `pip` may struggle to get the `dgl` from PyPI that is compatible with the `torch` version you need for other dependencies and so on. In such case, we recommend to install lightweight (CPU) version of `torch` and matching `dgl` that should work well together by:
+```shell
+pip install torch==2.3.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+and
+```shell
+pip install  dgl -f https://data.dgl.ai/wheels/torch-2.3/repo.html
+```
+adjusting the torch version in both to your needs.
+
 ## Contributions
 
 Please direct all contributions to [the ALIGNN repository](https://github.com/usnistgov/alignn). We will be synching our fork with them every once in a while and can do it quickly upon reasonable request. 
