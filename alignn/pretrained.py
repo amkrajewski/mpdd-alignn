@@ -141,12 +141,28 @@ def run_models_from_directory(
             modelCheckpoint = modelCheckpoint[0]
         config = json.loads(zp.read([i for i in zp.namelist() if "config.json" in i][0]))
         data = zipfile.ZipFile(modelPath).read(modelCheckpoint)
-        loadedModel = ALIGNN(ALIGNNConfig(**config["model"]))
+        
+        # Create model based on the model name in config
+        model_type = config["model"]["name"]
+        if model_type == "alignn":
+            loadedModel = ALIGNN(ALIGNNConfig(**config["model"]))
+        elif model_type == "alignn_atomwise":
+            loadedModel = ALIGNNAtomWise(ALIGNNAtomWiseConfig(**config["model"]))
+        else:
+            raise ValueError(f"Unknown model type: {model_type} for model {model['name']}")
 
         _, filename = tempfile.mkstemp()
         with open(filename, "wb") as f:
             f.write(data)
-        loadedModel.load_state_dict(torch.load(filename, map_location='cpu')["model"])
+        
+        # Load checkpoint and handle different checkpoint formats
+        checkpoint = torch.load(filename, map_location='cpu')
+        if "model" in checkpoint:
+            loadedModel.load_state_dict(checkpoint["model"])
+        else:
+            # Some checkpoints store the model state dict directly
+            loadedModel.load_state_dict(checkpoint)
+            
         loadedModel.to('cpu')
         loadedModel.eval()
         modelArray.append(loadedModel)
