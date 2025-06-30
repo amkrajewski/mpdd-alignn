@@ -41,3 +41,21 @@ defaultModels:
   url: 
     - https://figshare.com/ndownloader/files/31458814
     - https://zenodo.org/records/15772850/files/mp_gappbe_alignnn.zip
+
+- name: ALIGNN-Alexandria Bandgap [eV]
+  model: alex_band_gap.zip
+  url:
+    - https://figshare.com/ndownloader/files/51993641
+    - https://zenodo.org/records/15772850/files/alex_band_gap.zip
+  
+- name: ALIGNN-Alexandria Formation Energy [eV/atom]
+  model: alex_e_form.zip
+  url:
+    - https://figshare.com/ndownloader/files/51993647
+    - https://zenodo.org/records/15772850/files/alex_e_form.zip
+
+- name: ALIGNN-Alexandria Volume Per Atom [A^3]
+  model: alex_vol_pa.zip
+  url:
+    - https://figshare.com/ndownloader/files/51993656
+    - https://zenodo.org/records/15772850/files/alex_vol_pa.zip
