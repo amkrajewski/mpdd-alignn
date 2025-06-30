@@ -6,6 +6,9 @@ __pycache__/
 graphs/**
 mpddtest/**
 
+# Model ZIP files
+*.zip
+
 # C extensions
 *.so
 
