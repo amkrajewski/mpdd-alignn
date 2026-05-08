@@ -83,23 +83,13 @@ def unzip_default_models() -> None:
         with zipfile.ZipFile(model['model'], 'r') as zip_ref:
             zip_ref.extractall(model['model'].replace('.zip', ''))
 
-def run_models_from_directory(
-        directory: str, 
-        mode: str = "serial",
-        saveGraphs: bool = False):
-    """Run all default models on all structures in a directory that are either in POSCAR or CIF format."""
-    # Parse all structures into Atoms objects
-    atoms_array = []
-    outputs: List[Dict[str, Union[float, str]]] = []
-    for file in os.listdir(directory):
-        if file.endswith(("poscar", "POSCAR", "vasp", "VASP")):
-            outputs.append({"name": file})
-            atoms_array.append(Atoms.from_poscar(os.path.join(directory, file)))
-        elif file.endswith(("cif", "CIF")):
-            outputs.append({"name": file})
-            atoms_array.append(Atoms.from_cif(os.path.join(directory, file)))
-        else:
-            print(f"Skipping file {file} as it is not a POSCAR or CIF file!", flush=True)
+def _run_pretrained_models(
+    atoms_array: List[Atoms],
+    outputs: List[Dict[str, Union[float, str]]],
+    mode: str = "serial",
+    saveGraphs: bool = False,
+):
+    """Internal helper to run all default models on already parsed structures."""
     # Convert all Atoms to Graphs
     print(f"Converting {len(atoms_array)} structures to graphs...", flush=True)
     if mode == "serial":
@@ -115,85 +105,141 @@ def run_models_from_directory(
         )
     else:
         raise ValueError(f"Mode {mode} not implemented!")
-    
+
     if saveGraphs:
         print("Saving graphs to disk...", flush=True)
         input_files = [i["name"] for i in outputs]
         for g, name in zip(graph_array, input_files):
-            save_graphs(f"graphs/{name}.graph.bin", list(g), formats='coo')
+            save_graphs(f"graphs/{name}.graph.bin", list(g), formats="coo")
         print("Graphs saved!", flush=True)
 
     modelArray = []
     for model in default_models:
-        modelPath = str(resources.files('alignn').joinpath(model['model']))
-        zp = zipfile.ZipFile(modelPath, 'r')
-        # Get the full path of checkpoint_300.pt or best_model.pt in the zip. Pick the first one found.
-        # This is a workaround for the fact that some models (new ones) have a different naming convention
-        # for the ALIGNN checkpoint files.
+        modelPath = str(resources.files("alignn").joinpath(model["model"]))
+        zp = zipfile.ZipFile(modelPath, "r")
+
         modelCheckpoint = [
-            i for i in zp.namelist() 
+            i for i in zp.namelist()
             if ("checkpoint_" in i and "pt" in i) or "best_model.pt" in i
-            ]
+        ]
         if len(modelCheckpoint) == 0:
-            raise ValueError(f"No model identifier found in {modelPath} for model {model['name']}!", flush=True)
+            raise ValueError(
+                f"No model identifier found in {modelPath} for model {model['name']}!"
+            )
         if len(modelCheckpoint) > 1:
-            print(f"Multiple model identifiers ({len(modelCheckpoint)}) found in {modelPath} for model {model['name']}: {modelCheckpoint}. Using the first one in the list.", flush=True)
-            modelCheckpoint = modelCheckpoint[0]
-        else:
-            modelCheckpoint = modelCheckpoint[0]
-        config = json.loads(zp.read([i for i in zp.namelist() if "config.json" in i][0]))
+            print(
+                f"Multiple model identifiers ({len(modelCheckpoint)}) found in "
+                f"{modelPath} for model {model['name']}: {modelCheckpoint}. "
+                "Using the first one in the list.",
+                flush=True,
+            )
+        modelCheckpoint = modelCheckpoint[0]
+
+        config = json.loads(
+            zp.read([i for i in zp.namelist() if "config.json" in i][0])
+        )
         data = zipfile.ZipFile(modelPath).read(modelCheckpoint)
-        
-        # Create model based on the model name in config
+
         model_type = config["model"]["name"]
         if model_type == "alignn":
             loadedModel = ALIGNN(ALIGNNConfig(**config["model"]))
         elif model_type == "alignn_atomwise":
             loadedModel = ALIGNNAtomWise(ALIGNNAtomWiseConfig(**config["model"]))
         else:
-            raise ValueError(f"Unknown model type: {model_type} for model {model['name']}")
+            raise ValueError(
+                f"Unknown model type: {model_type} for model {model['name']}"
+            )
 
         _, filename = tempfile.mkstemp()
         with open(filename, "wb") as f:
             f.write(data)
-        
-        # Load checkpoint and handle different checkpoint formats
-        checkpoint = torch.load(filename, map_location='cpu')
+
+        checkpoint = torch.load(filename, map_location="cpu")
         if "model" in checkpoint:
             loadedModel.load_state_dict(checkpoint["model"])
         else:
-            # Some checkpoints store the model state dict directly
             loadedModel.load_state_dict(checkpoint)
-            
-        loadedModel.to('cpu')
+
+        loadedModel.to("cpu")
         loadedModel.eval()
         modelArray.append(loadedModel)
-        
+
         print(f"Model {model['name']} loaded!", flush=True)
-    
-    print(f"Running {len(default_models)} models on {len(graph_array)} structures...", flush=True)
-    # Run all models on all graphs
+
+    print(
+        f"Running {len(default_models)} models on {len(graph_array)} structures...",
+        flush=True,
+    )
     for model, loaded_model in zip(default_models, modelArray):
         for g, out in zip(graph_array, outputs):
             model_output = loaded_model([g[0], g[1]])
-            
-            # Handle different output formats
+
             if isinstance(model_output, dict):
-                # For atomwise models that return dict with 'out' key
-                if 'out' in model_output:
-                    out_data = model_output['out'].item()
+                if "out" in model_output:
+                    out_data = model_output["out"].item()
                 else:
-                    # Take the first value if dict has other keys
                     out_data = list(model_output.values())[0].item()
             else:
-                # For regular models that return tensor directly
                 out_data = model_output.item()
-                
-            out[model['name']] = round(out_data, 6)
-    
-    print("All models runs complete!", flush=True)
 
+            out[model["name"]] = round(out_data, 6)
+
+    print("All models runs complete!", flush=True)
     return outputs
+
+
+def run_models_from_directory(
+    directory: str,
+    mode: str = "serial",
+    saveGraphs: bool = False,
+):
+    """Run all default models on all structures in a directory that are either in POSCAR or CIF format."""
+    atoms_array = []
+    outputs: List[Dict[str, Union[float, str]]] = []
+
+    for file in os.listdir(directory):
+        if file.endswith(("poscar", "POSCAR", "vasp", "VASP")):
+            outputs.append({"name": file})
+            atoms_array.append(Atoms.from_poscar(os.path.join(directory, file)))
+        elif file.endswith(("cif", "CIF")):
+            outputs.append({"name": file})
+            atoms_array.append(Atoms.from_cif(os.path.join(directory, file)))
+        else:
+            print(f"Skipping file {file} as it is not a POSCAR or CIF file!", flush=True)
+
+    return _run_pretrained_models(
+        atoms_array=atoms_array,
+        outputs=outputs,
+        mode=mode,
+        saveGraphs=saveGraphs,
+    )
+
+
+def run_models_from_structure(
+    structure: str,
+    mode: str = "serial",
+    saveGraphs: bool = False,
+):
+    """Run all default models on a single structure file in POSCAR or CIF format."""
+    atoms_array = []
+    outputs: List[Dict[str, Union[float, str]]] = []
+
+    file = os.path.basename(structure)
+    if file.endswith(("poscar", "POSCAR", "vasp", "VASP")):
+        outputs.append({"name": file})
+        atoms_array.append(Atoms.from_poscar(structure))
+    elif file.endswith(("cif", "CIF")):
+        outputs.append({"name": file})
+        atoms_array.append(Atoms.from_cif(structure))
+    else:
+        raise ValueError(f"File {structure} is not a POSCAR/VASP or CIF file!")
+
+    return _run_pretrained_models(
+        atoms_array=atoms_array,
+        outputs=outputs,
+        mode=mode,
+        saveGraphs=saveGraphs,
+    )
 
 # ******* Old method to download models *******
 """
