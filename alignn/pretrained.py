@@ -18,6 +18,7 @@ import pandas as pd
 tqdm.pandas()
 from pysmartdl2 import SmartDL
 from dgl.data.utils import save_graphs, load_graphs
+from natsort import natsorted
 
 # ML imports
 import torch
