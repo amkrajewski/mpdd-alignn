@@ -249,7 +249,7 @@ def run_models_from_directory(
     atoms_array = []
     outputs: List[Dict[str, Union[float, str]]] = []
 
-    for file in os.listdir(directory):
+    for file in natsorted(os.listdir(directory)):
         if file.endswith(("poscar", "POSCAR", "vasp", "VASP")):
             outputs.append({"name": file})
             atoms_array.append(Atoms.from_poscar(os.path.join(directory, file)))
