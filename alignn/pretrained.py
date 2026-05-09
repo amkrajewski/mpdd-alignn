@@ -183,7 +183,8 @@ def _run_pretrained_models(
                 f"Unknown model type: {model_type} for model {model['name']}"
             )
 
-        _, filename = tempfile.mkstemp()
+        fd, filename = tempfile.mkstemp()
+        os.close(fd)
         with open(filename, "wb") as f:
             f.write(data)
 
