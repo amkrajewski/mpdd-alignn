@@ -5,7 +5,7 @@ import os
 import sys
 import json
 import time
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 from importlib import resources
 
 # Extra utility imports
@@ -89,7 +89,7 @@ def _run_pretrained_models(
     outputs: List[Dict[str, Union[float, str]]],
     mode: str = "serial",
     saveGraphs: bool = False,
-    models: List[str] = None,
+    models: Optional[List[str]] = None,
 ):
     """Internal helper to run default models on already parsed structures.
     
@@ -227,7 +227,7 @@ def run_models_from_directory(
     directory: str,
     mode: str = "serial",
     saveGraphs: bool = False,
-    models: List[str] = None,
+    models: Optional[List[str]] = None,
 ):
     """Run default models on all structures in a directory that are either in POSCAR or CIF format.
     
@@ -273,7 +273,7 @@ def run_models_from_structure(
     structure: str,
     mode: str = "serial",
     saveGraphs: bool = False,
-    models: List[str] = None,
+    models: Optional[List[str]] = None,
 ):
     """Run default models on a single structure file in POSCAR or CIF format.
     
