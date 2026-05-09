@@ -88,8 +88,41 @@ def _run_pretrained_models(
     outputs: List[Dict[str, Union[float, str]]],
     mode: str = "serial",
     saveGraphs: bool = False,
+    models: List[str] = None,
 ):
-    """Internal helper to run all default models on already parsed structures."""
+    """Internal helper to run default models on already parsed structures.
+    
+    Parameters
+    ----------
+    atoms_array : List[Atoms]
+        Array of atomic structures to run predictions on.
+    outputs : List[Dict[str, Union[float, str]]]
+        List of output dictionaries (typically containing file names).
+    mode : str, optional
+        Either "serial" or "parallel" for execution mode. Default is "serial".
+    saveGraphs : bool, optional
+        Whether to save computed graphs to disk. Default is False.
+    models : List[str], optional
+        List of model names to run. If None, all default models are run.
+        
+    Returns
+    -------
+    List[Dict[str, Union[float, str]]]
+        Output dictionaries with model predictions added as new keys.
+    """
+    # Validate and filter models
+    if models is None:
+        active_models = default_models
+    else:
+        model_names_set = {m["name"] for m in default_models}
+        invalid_models = [m for m in models if m not in model_names_set]
+        if invalid_models:
+            raise ValueError(
+                f"The following model names were not found in default models: {invalid_models}. "
+                f"Available models: {sorted(model_names_set)}"
+            )
+        active_models = [m for m in default_models if m["name"] in set(models)]
+    
     # Convert all Atoms to Graphs
     print(f"Converting {len(atoms_array)} structures to graphs...", flush=True)
     if mode == "serial":
@@ -114,7 +147,7 @@ def _run_pretrained_models(
         print("Graphs saved!", flush=True)
 
     modelArray = []
-    for model in default_models:
+    for model in active_models:
         modelPath = str(resources.files("alignn").joinpath(model["model"]))
         zp = zipfile.ZipFile(modelPath, "r")
 
@@ -167,10 +200,10 @@ def _run_pretrained_models(
         print(f"Model {model['name']} loaded!", flush=True)
 
     print(
-        f"Running {len(default_models)} models on {len(graph_array)} structures...",
+        f"Running {len(active_models)} models on {len(graph_array)} structures...",
         flush=True,
     )
-    for model, loaded_model in zip(default_models, modelArray):
+    for model, loaded_model in zip(active_models, modelArray):
         for g, out in zip(graph_array, outputs):
             model_output = loaded_model([g[0], g[1]])
 
@@ -192,8 +225,26 @@ def run_models_from_directory(
     directory: str,
     mode: str = "serial",
     saveGraphs: bool = False,
+    models: List[str] = None,
 ):
-    """Run all default models on all structures in a directory that are either in POSCAR or CIF format."""
+    """Run default models on all structures in a directory that are either in POSCAR or CIF format.
+    
+    Parameters
+    ----------
+    directory : str
+        Path to directory containing structure files.
+    mode : str, optional
+        Either "serial" or "parallel" for execution mode. Default is "serial".
+    saveGraphs : bool, optional
+        Whether to save computed graphs to disk. Default is False.
+    models : List[str], optional
+        List of model names to run. If None, all default models are run.
+        
+    Returns
+    -------
+    List[Dict[str, Union[float, str]]]
+        Output dictionaries with model predictions added as new keys.
+    """
     atoms_array = []
     outputs: List[Dict[str, Union[float, str]]] = []
 
@@ -212,6 +263,7 @@ def run_models_from_directory(
         outputs=outputs,
         mode=mode,
         saveGraphs=saveGraphs,
+        models=models,
     )
 
 
@@ -219,8 +271,26 @@ def run_models_from_structure(
     structure: str,
     mode: str = "serial",
     saveGraphs: bool = False,
+    models: List[str] = None,
 ):
-    """Run all default models on a single structure file in POSCAR or CIF format."""
+    """Run default models on a single structure file in POSCAR or CIF format.
+    
+    Parameters
+    ----------
+    structure : str
+        Path to structure file.
+    mode : str, optional
+        Either "serial" or "parallel" for execution mode. Default is "serial".
+    saveGraphs : bool, optional
+        Whether to save computed graphs to disk. Default is False.
+    models : List[str], optional
+        List of model names to run. If None, all default models are run.
+        
+    Returns
+    -------
+    List[Dict[str, Union[float, str]]]
+        Output dictionary with model predictions added as new keys.
+    """
     atoms_array = []
     outputs: List[Dict[str, Union[float, str]]] = []
 
@@ -239,6 +309,7 @@ def run_models_from_structure(
         outputs=outputs,
         mode=mode,
         saveGraphs=saveGraphs,
+        models=models,
     )
 
 # ******* Old method to download models *******
