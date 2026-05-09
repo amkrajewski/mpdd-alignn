@@ -290,7 +290,8 @@ def run_models_from_structure(
     Returns
     -------
     List[Dict[str, Union[float, str]]]
-        Output dictionary with model predictions added as new keys.
+        List containing one output dictionary for the input structure, with
+        model predictions added as new keys.
     """
     atoms_array = []
     outputs: List[Dict[str, Union[float, str]]] = []
