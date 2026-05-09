@@ -6,13 +6,28 @@ from unittest import TestCase, mock
 import pytest
 
 from alignn import pretrained
+from alignn.pretrained import _run_pretrained_models
+
+
+def test_invalid_model_name_raises_error():
+    """Regression test: passing invalid model names should raise a ValueError
+    from `_run_pretrained_models` with the expected message.
+    """
+    invalid_models_list = ["fake_model_name_xyz", "another_bad_model"]
+
+    with pytest.raises(ValueError, match="The following model names were not found in default models"):
+        _run_pretrained_models(
+            atoms_array=[],
+            outputs=[],
+            models=invalid_models_list,
+        )
 
 
 def _fake_run_pretrained_models(
     atoms_array, outputs, mode="serial", saveGraphs=False, models=None
 ):
     """Return deterministic payloads so the wrapper behavior can be compared.
-    
+
     Includes models information in response for validation.
     """
     return [
@@ -119,16 +134,16 @@ class TestModelFiltering:
             # Verify the mock was called with correct parameters
             mock_run.assert_called_once()
             call_kwargs = mock_run.call_args.kwargs
-            
+
             # Verify models parameter was passed correctly
             assert call_kwargs["models"] == models_selection, (
                 f"Expected models={models_selection}, got {call_kwargs['models']}"
             )
-            
+
             # Verify other parameters
             assert call_kwargs["mode"] == mode
             assert call_kwargs["saveGraphs"] == saveGraphs
-            
+
             # Verify the models information is in the returned results
             assert len(results) == 1
             assert results[0]["models_used"] == models_selection
@@ -154,16 +169,16 @@ class TestModelFiltering:
             # Verify the mock was called with correct parameters
             mock_run.assert_called_once()
             call_kwargs = mock_run.call_args.kwargs
-            
+
             # Verify models parameter was passed correctly
             assert call_kwargs["models"] == models_selection, (
                 f"Expected models={models_selection}, got {call_kwargs['models']}"
             )
-            
+
             # Verify other parameters
             assert call_kwargs["mode"] == mode
             assert call_kwargs["saveGraphs"] == saveGraphs
-            
+
             # Verify the models information is in all returned results
             for result in results:
                 assert result["models_used"] == models_selection
