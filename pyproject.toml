@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mpdd-alignn"
-version = "1.2.0"
+version = "1.3.0"
 authors = [
-  { name="Adam M. Krajewski", email="adam@phaseslab.org" }
+  { name="Adam M. Krajewski", email="adam@phaseslab.org" },
+  { name="Ricardo Amaral", email="rna5137@psu.edu" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
