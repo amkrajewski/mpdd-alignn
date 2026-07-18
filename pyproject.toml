@@ -42,7 +42,8 @@ dependencies = [
     "pandas>=1.2.3",
     "pydantic_settings",
     "ruamel.yaml",
-    "pysmartdl2"
+    "pysmartdl2",
+    "yaml"
 ]
 
 [project.optional-dependencies]
