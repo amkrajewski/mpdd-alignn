@@ -1,6 +1,15 @@
 # MPDD - ALIGNN Calculator
 
-This tool is a modified version of the **NIST-JARVIS** [**`ALIGNN`**](https://github.com/usnistgov/alignn) optimized in terms of model performance and to some extent reliability, for large-scale deployments over the [**`MPDD`**](https://phaseslab.org/mpdd) infrastructure by Phases Research Lab.
+[![GitHub top language](https://img.shields.io/github/languages/top/amkrajewski/mpdd-alignn)](https://github.com/amkrajewski/mpdd-alignn)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mpdd-alignn)](https://pypi.org/project/mpdd-alignn)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/MIT)
+[![PyPI - Version](https://img.shields.io/pypi/v/mpdd-alignn?label=PyPI&color=green)](https://pypi.org/project/mpdd-alignn)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/mpdd-alignn)](https://pypi.org/project/mpdd-alignn)
+
+[![Core Linux (Ubuntu)](https://github.com/amkrajewski/mpdd-alignn/actions/workflows/quickTest.yaml/badge.svg)](https://github.com/amkrajewski/mpdd-alignn/actions/workflows/quickTest.yaml)
+
+
+This tool is a fork of the **NIST-JARVIS** [**`ALIGNN`**](https://github.com/usnistgov/alignn) optimized in terms of model performance and to some extent reliability, for large-scale deployments over the [**`MPDD`**](https://phaseslab.org/mpdd) infrastructure by Phases Research Lab.
 
 ## Critical Changes
 
